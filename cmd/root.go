@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log/syslog"
 	"os"
 	"strings"
 	"time"
@@ -11,11 +12,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
-	"log/syslog"
-        "github.com/wercker/journalhook"
+	"github.com/wercker/journalhook"
 )
-
-journalhook.Enable()
 
 var cfgFile string
 
@@ -72,10 +70,8 @@ func init() {
 			log.Fatalf("Failed to initialize syslog hook: %v", err)
 		}
 		log.AddHook(hook)
-        case "journald":
-                if err := journald.Enable(); err != nil {
-                       return err
-                }
+	case "journald":
+		journalhook.Enable()
 	case "default":
 	default:
 		log.Fatalf("Unknown log format: %s", viper.GetString("log-format"))
